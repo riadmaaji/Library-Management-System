@@ -2,7 +2,11 @@ const db = require('../storage/LocalStorageDB');
 const { COLLECTIONS } = require('../config/constants');
 const { comparePassword } = require('../utils/password');
 const { generateToken } = require('../utils/token');
-const { UnauthorizedError, NotFoundError } = require('../utils/AppError');
+const {
+  UnauthorizedError,
+  NotFoundError,
+  ValidationError,
+} = require('../utils/AppError');
 
 function sanitizeUser(user) {
   const { password, ...safeUser } = user;
@@ -10,7 +14,13 @@ function sanitizeUser(user) {
 }
 
 async function login(email, password) {
-  const user = db.getByField(COLLECTIONS.USERS, 'email', email);
+  if (typeof password !== 'string') {
+    throw new ValidationError('Validation failed', ['password must be a string.']);
+  }
+
+  const normalizedEmail =
+    typeof email === 'string' ? email.trim().toLowerCase() : '';
+  const user = db.getByField(COLLECTIONS.USERS, 'email', normalizedEmail);
 
   if (!user || !user.password) {
     throw new UnauthorizedError('Invalid email or password');
