@@ -142,4 +142,8 @@ server/data/*.json
 server/data/localStorage/
 .env.local
 .DS_Store
+
+# Other files
 docs/plans/
+.cursor/
+INSTRUCTIONS.md
