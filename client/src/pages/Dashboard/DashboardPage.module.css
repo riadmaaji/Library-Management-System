@@ -1,0 +1,310 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  max-width: 72rem;
+  margin: 0 auto;
+}
+
+.overview {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.hero {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.heroMeta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.eyebrow {
+  margin: 0;
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+}
+
+.title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(1.75rem, 4vw, 2.25rem);
+  font-weight: var(--font-weight-regular);
+  color: var(--color-heading);
+  line-height: 1.2;
+}
+
+.date {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-soft);
+}
+
+.availability {
+  margin: 0;
+  padding: 0.35rem 0.8rem;
+  border: 1px solid rgba(61, 101, 112, 0.2);
+  border-radius: var(--radius-round);
+  background: var(--color-info-soft);
+  color: var(--color-info);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.lede {
+  margin: 0;
+  max-width: 42rem;
+  font-size: var(--font-size-md);
+  color: var(--color-text-soft);
+  line-height: 1.55;
+}
+
+.statGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(11.5rem, 1fr));
+  gap: var(--space-4);
+}
+
+.statCard {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-height: 5.5rem;
+  padding: var(--space-4);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.92), rgba(255, 249, 241, 0.88)),
+    var(--color-surface);
+  box-shadow: var(--shadow-sm);
+  opacity: 0;
+  transform: translateY(14px);
+  animation: stat-card-enter var(--transition-slow) forwards;
+  animation-delay: var(--card-delay, 0ms);
+  position: relative;
+  overflow: hidden;
+}
+
+.statCard::before {
+  content: '';
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 0.32rem;
+  background: rgba(79, 66, 48, 0.14);
+}
+
+.statCardInfo {
+  border-color: rgba(61, 101, 112, 0.16);
+}
+
+.statCardInfo::before {
+  background: var(--color-info);
+}
+
+.statCardNeutral {
+  border-color: rgba(79, 66, 48, 0.12);
+}
+
+.statCardNeutral::before {
+  background: rgba(79, 66, 48, 0.5);
+}
+
+.statCardSuccess {
+  border-color: rgba(95, 130, 103, 0.18);
+}
+
+.statCardSuccess::before {
+  background: var(--color-success);
+}
+
+.statCardWarning {
+  background:
+    linear-gradient(145deg, rgba(255, 252, 246, 0.96), rgba(249, 239, 221, 0.9)),
+    var(--color-surface);
+  border-color: rgba(154, 111, 58, 0.28);
+}
+
+.statCardWarning::before {
+  background: var(--color-warning);
+}
+
+.statCardDanger {
+  background:
+    linear-gradient(145deg, rgba(255, 251, 247, 0.98), rgba(250, 232, 228, 0.92)),
+    var(--color-surface);
+  border-color: rgba(163, 85, 79, 0.28);
+  box-shadow: 0 20px 38px -24px rgba(163, 85, 79, 0.32);
+}
+
+.statCardDanger::before {
+  background: var(--color-danger);
+}
+
+.statHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.statIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 0.9rem;
+  border: 1px solid transparent;
+}
+
+.statIcon svg {
+  width: 1.2rem;
+  height: 1.2rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.statIconInfo {
+  background: var(--color-info-soft);
+  color: var(--color-info);
+  border-color: rgba(61, 101, 112, 0.18);
+}
+
+.statIconNeutral {
+  background: rgba(79, 66, 48, 0.08);
+  color: var(--color-text-soft);
+  border-color: var(--color-border);
+}
+
+.statIconSuccess {
+  background: var(--color-success-soft);
+  color: var(--color-success);
+  border-color: rgba(95, 130, 103, 0.2);
+}
+
+.statIconWarning {
+  background: var(--color-warning-soft);
+  color: var(--color-warning);
+  border-color: rgba(154, 111, 58, 0.24);
+}
+
+.statIconDanger {
+  background: var(--color-danger-soft);
+  color: var(--color-danger);
+  border-color: rgba(163, 85, 79, 0.24);
+}
+
+.statLabel {
+  margin: 0;
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-text-soft);
+}
+
+.statValue {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  font-weight: var(--font-weight-regular);
+  color: var(--color-heading);
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+
+.statSkeleton {
+  min-height: 5.5rem;
+  padding: var(--space-4);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface-muted);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  justify-content: center;
+}
+
+.skeletonLine {
+  display: block;
+  height: 0.65rem;
+  border-radius: var(--radius-round);
+  background: linear-gradient(
+    90deg,
+    rgba(107, 90, 78, 0.12) 0%,
+    rgba(107, 90, 78, 0.22) 50%,
+    rgba(107, 90, 78, 0.12) 100%
+  );
+  background-size: 200% 100%;
+  animation: dashboard-shimmer 1.2s ease-in-out infinite;
+}
+
+.skeletonLineShort {
+  width: 42%;
+}
+
+.skeletonLineLong {
+  width: 58%;
+}
+
+@keyframes dashboard-shimmer {
+  0% {
+    background-position: 100% 0;
+  }
+  100% {
+    background-position: -100% 0;
+  }
+}
+
+@keyframes stat-card-enter {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.tableHint {
+  margin: 0 0 var(--space-3);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-soft);
+}
+
+.cellMuted {
+  color: var(--color-text-soft);
+  font-size: var(--font-size-sm);
+}
+
+.cellTitle {
+  font-weight: var(--font-weight-medium);
+  color: var(--color-heading);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .statCard {
+    opacity: 1;
+    transform: none;
+    animation: none;
+  }
+
+  .skeletonLine {
+    animation: none;
+  }
+}
