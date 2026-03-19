@@ -53,7 +53,15 @@ function getAvailability(book) {
 
 function BookStackIcon() {
   return (
-    <svg viewBox="0 0 24 24" aria-hidden="true">
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.7"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
       <path d="M6.5 5.25h10.5a1.75 1.75 0 0 1 1.75 1.75v9.5A1.75 1.75 0 0 1 17 18.25H6.5A1.75 1.75 0 0 1 4.75 16.5V7A1.75 1.75 0 0 1 6.5 5.25Z" />
       <path d="M8 8.5h7.5" />
       <path d="M8 11.5h7.5" />
