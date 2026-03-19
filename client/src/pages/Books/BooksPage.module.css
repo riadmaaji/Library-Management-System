@@ -1,0 +1,193 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  max-width: 72rem;
+  margin: 0 auto;
+}
+
+.hero {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+.heroCopy {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  max-width: 42rem;
+}
+
+.eyebrow {
+  margin: 0;
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+}
+
+.title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(1.75rem, 4vw, 2.25rem);
+  font-weight: var(--font-weight-regular);
+  line-height: 1.2;
+  color: var(--color-heading);
+}
+
+.lede {
+  margin: 0;
+  font-size: var(--font-size-md);
+  line-height: 1.55;
+  color: var(--color-text-soft);
+}
+
+.filterRow {
+  display: grid;
+  grid-template-columns: minmax(0, 1.8fr) minmax(14rem, 0.9fr);
+  gap: var(--space-4);
+  align-items: end;
+}
+
+.searchField {
+  min-width: 0;
+}
+
+.selectField {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.selectLabel {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-heading);
+}
+
+.select {
+  width: 100%;
+  min-height: 3rem;
+  padding: 0.8rem 0.95rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font: inherit;
+  transition:
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast),
+    transform var(--transition-fast);
+}
+
+.select:focus-visible {
+  outline: none;
+  border-color: var(--color-info);
+  box-shadow: 0 0 0 4px rgba(61, 101, 112, 0.12);
+}
+
+.resultsSummary {
+  margin: var(--space-4) 0 0;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-soft);
+}
+
+.titleCell {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.bookTitle {
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-heading);
+}
+
+.bookMeta,
+.cellMuted {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-soft);
+}
+
+.cellText {
+  color: var(--color-text);
+}
+
+.availabilityCell {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  min-width: 11rem;
+}
+
+.availabilitySummary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.availabilityCount {
+  font-variant-numeric: tabular-nums;
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-heading);
+}
+
+.availabilityTrack {
+  position: relative;
+  overflow: hidden;
+  height: 0.45rem;
+  border-radius: var(--radius-round);
+  background: rgba(107, 90, 78, 0.12);
+}
+
+.availabilityFill {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  transition: width var(--transition-slow);
+}
+
+.availabilityFillSuccess {
+  background: linear-gradient(90deg, rgba(95, 130, 103, 0.72), var(--color-success));
+}
+
+.availabilityFillDanger {
+  background: linear-gradient(90deg, rgba(163, 85, 79, 0.65), var(--color-danger));
+}
+
+.actionGroup {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.confirmMessage {
+  margin: 0;
+  line-height: 1.6;
+  color: var(--color-text);
+}
+
+@media (max-width: 900px) {
+  .hero {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .filterRow {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .page {
+    gap: var(--space-5);
+  }
+
+  .availabilityCell {
+    min-width: 9rem;
+  }
+}
