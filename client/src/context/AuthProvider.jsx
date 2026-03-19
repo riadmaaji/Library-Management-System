@@ -1,9 +1,8 @@
-import { createContext, useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getMe, login as loginRequest } from '../api/services/authService';
 import { TOKEN_STORAGE_KEY } from '../api/axios';
-
-export const AuthContext = createContext(null);
+import { AuthContext } from './authContext';
 
 export function AuthProvider({ children }) {
   const navigate = useNavigate();

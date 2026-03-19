@@ -9,8 +9,8 @@ function App() {
         <p className="eyebrow">Foundation</p>
         <h1>Library Management System</h1>
         <p className="lead">
-          The frontend foundation is in place with the global theme, shared API
-          client, and authentication bootstrap ready for the next tasks.
+          The frontend foundation is in place with the global theme, shared API client, and authentication
+          bootstrap ready for the next tasks.
         </p>
         <div className="status-note" aria-live="polite">
           {loading

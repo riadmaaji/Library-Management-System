@@ -5,6 +5,8 @@
   --color-background-alt: #e7dcc8;
   --color-surface: rgba(255, 251, 245, 0.9);
   --color-surface-strong: #fffdf8;
+  --color-surface-muted: rgba(244, 236, 224, 0.92);
+  --color-surface-elevated: rgba(255, 253, 248, 0.98);
   --color-border: rgba(79, 66, 48, 0.16);
   --color-border-strong: rgba(40, 72, 77, 0.26);
   --color-text: #322820;
@@ -15,7 +17,13 @@
   --color-accent: #c48a3a;
   --color-accent-soft: rgba(196, 138, 58, 0.16);
   --color-success: #5f8267;
+  --color-success-soft: rgba(95, 130, 103, 0.14);
   --color-danger: #a3554f;
+  --color-danger-soft: rgba(163, 85, 79, 0.14);
+  --color-warning: #9a6f3a;
+  --color-warning-soft: rgba(154, 111, 58, 0.16);
+  --color-info: #3d6570;
+  --color-info-soft: rgba(61, 101, 112, 0.14);
   --color-shadow: rgba(35, 26, 18, 0.12);
   --color-shadow-strong: rgba(35, 26, 18, 0.2);
 

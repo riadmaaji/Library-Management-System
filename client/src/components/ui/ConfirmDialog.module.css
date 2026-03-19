@@ -1,0 +1,27 @@
+.message {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  line-height: 1.5;
+  color: var(--color-text-soft);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-2);
+  margin-top: var(--space-5);
+}
+
+.confirmWarning {
+  background: var(--color-warning);
+  color: var(--color-surface-strong);
+  border-color: transparent;
+  box-shadow: var(--shadow-sm);
+}
+
+.confirmWarning:hover:not(:disabled) {
+  filter: brightness(1.06);
+  transform: translateY(-1px);
+}
