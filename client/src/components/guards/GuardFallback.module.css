@@ -1,0 +1,51 @@
+.fullPage {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: var(--space-6);
+}
+
+.loadingPanel {
+  display: grid;
+  gap: var(--space-4);
+  justify-items: center;
+  width: min(100%, 24rem);
+  padding: var(--space-6);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.84), rgba(255, 249, 241, 0.92)),
+    var(--color-surface);
+  box-shadow: var(--shadow-md);
+  text-align: center;
+}
+
+.loadingPanel p {
+  color: var(--color-text-soft);
+}
+
+.deniedWrap {
+  min-height: calc(100vh - 12rem);
+  display: grid;
+  place-items: center;
+}
+
+.deniedCard {
+  width: min(100%, 38rem);
+}
+
+.deniedBody {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.deniedText {
+  color: var(--color-text-soft);
+}
+
+.deniedActions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}

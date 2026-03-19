@@ -1,0 +1,14 @@
+.page {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.card {
+  width: min(100%, 48rem);
+}
+
+.description {
+  color: var(--color-text-soft);
+  font-size: var(--font-size-md);
+  line-height: 1.7;
+}

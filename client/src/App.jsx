@@ -1,27 +1,34 @@
-import { useAuth } from './hooks/useAuth';
+import { Navigate, Route, Routes } from 'react-router-dom';
+import AdminGuard from './components/guards/AdminGuard';
+import AuthGuard from './components/guards/AuthGuard';
+import AppLayout from './components/layout/AppLayout';
+import BooksPage from './pages/Books/BooksPage';
+import CustomersPage from './pages/Customers/CustomersPage';
+import DashboardPage from './pages/Dashboard/DashboardPage';
+import LoginPage from './pages/Login/LoginPage';
+import TransactionsPage from './pages/Transactions/TransactionsPage';
+import UsersPage from './pages/Users/UsersPage';
 
-function App() {
-  const { user, loading } = useAuth();
-
+export default function App() {
   return (
-    <main className="app-shell">
-      <section className="app-panel">
-        <p className="eyebrow">Foundation</p>
-        <h1>Library Management System</h1>
-        <p className="lead">
-          The frontend foundation is in place with the global theme, shared API client, and authentication
-          bootstrap ready for the next tasks.
-        </p>
-        <div className="status-note" aria-live="polite">
-          {loading
-            ? 'Checking your saved session.'
-            : user
-              ? `Signed in as ${user.name} (${user.role}).`
-              : 'No active session detected. Ready for the login flow in the next task.'}
-        </div>
-      </section>
-    </main>
+    <Routes>
+      <Route path="/login" element={<LoginPage />} />
+
+      <Route element={<AuthGuard />}>
+        <Route element={<AppLayout />}>
+          <Route path="/" element={<Navigate to="/dashboard" replace />} />
+          <Route path="/dashboard" element={<DashboardPage />} />
+          <Route path="/books" element={<BooksPage />} />
+          <Route path="/customers" element={<CustomersPage />} />
+          <Route path="/transactions" element={<TransactionsPage />} />
+
+          <Route element={<AdminGuard />}>
+            <Route path="/users" element={<UsersPage />} />
+          </Route>
+        </Route>
+      </Route>
+
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
   );
 }
-
-export default App;
