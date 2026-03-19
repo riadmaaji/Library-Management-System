@@ -2,11 +2,16 @@
   min-height: 100vh;
   display: grid;
   place-items: center;
-  padding: clamp(1.5rem, 4vw, 3rem);
+  padding: clamp(1.25rem, 4vw, 3rem);
+  position: relative;
+  overflow: hidden;
 }
 
 .card {
-  width: min(100%, 34rem);
+  width: min(100%, 38rem);
+  position: relative;
+  z-index: 1;
+  animation: login-enter var(--transition-slow) both;
 }
 
 .content {
@@ -14,9 +19,157 @@
   gap: var(--space-5);
 }
 
+.heroCopy {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.eyebrow {
+  display: inline-flex;
+  width: fit-content;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-round);
+  background: rgba(33, 69, 74, 0.08);
+  color: var(--color-primary);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
 .description {
   color: var(--color-text-soft);
   line-height: 1.7;
+}
+
+.date {
+  color: var(--color-text-soft);
+  font-size: var(--font-size-sm);
+  letter-spacing: 0.03em;
+}
+
+.form {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.errorBanner {
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid rgba(163, 85, 79, 0.22);
+  border-radius: var(--radius-sm);
+  background: var(--color-danger-soft);
+  color: var(--color-danger);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+}
+
+.passwordWrapper {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.passwordLabel {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-heading);
+}
+
+.passwordField {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 2.75rem;
+  padding: 0 var(--space-3);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface-strong);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.65);
+  transition:
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast),
+    background-color var(--transition-fast);
+}
+
+.passwordField:focus-within {
+  border-color: var(--color-primary);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.65),
+    0 0 0 3px rgba(33, 69, 74, 0.12);
+}
+
+.passwordFieldError {
+  border-color: var(--color-danger);
+}
+
+.passwordFieldError:focus-within {
+  border-color: var(--color-danger);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.65),
+    0 0 0 3px rgba(163, 85, 79, 0.18);
+}
+
+.passwordIcon,
+.passwordToggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.passwordIcon {
+  color: var(--color-text-soft);
+}
+
+.passwordIcon svg,
+.passwordToggle svg {
+  width: 1.15rem;
+  height: 1.15rem;
+}
+
+.passwordInput {
+  flex: 1;
+  min-width: 0;
+  padding: var(--space-2) 0;
+  border: 0;
+  background: transparent;
+  color: var(--color-text);
+  outline: none;
+}
+
+.passwordInput::placeholder {
+  color: var(--color-text-soft);
+  opacity: 0.85;
+}
+
+.passwordToggle {
+  width: 2rem;
+  height: 2rem;
+  border: 0;
+  border-radius: var(--radius-round);
+  background: transparent;
+  color: var(--color-text-soft);
+  transition:
+    background-color var(--transition-fast),
+    color var(--transition-fast),
+    transform var(--transition-fast);
+}
+
+.passwordToggle:hover:not(:disabled) {
+  background: rgba(33, 69, 74, 0.08);
+  color: var(--color-primary);
+}
+
+.passwordToggle:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.passwordError {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-danger);
 }
 
 .note {
@@ -25,7 +178,9 @@
   padding: var(--space-4);
   border: 1px solid rgba(196, 138, 58, 0.22);
   border-radius: var(--radius-md);
-  background: rgba(255, 250, 242, 0.86);
+  background:
+    linear-gradient(180deg, rgba(255, 253, 248, 0.95), rgba(255, 247, 236, 0.92)),
+    rgba(255, 250, 242, 0.86);
   box-shadow: var(--shadow-sm);
 }
 
@@ -34,4 +189,68 @@
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--color-text-soft);
+}
+
+.backgroundGlow {
+  position: absolute;
+  inset: auto;
+  width: 40rem;
+  height: 40rem;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle, rgba(196, 138, 58, 0.28) 0%, rgba(33, 69, 74, 0.14) 35%, transparent 72%);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  filter: blur(22px);
+  opacity: 0.8;
+}
+
+.backgroundLines {
+  position: absolute;
+  inset: 7%;
+  border: 1px solid rgba(33, 69, 74, 0.08);
+  border-radius: calc(var(--radius-lg) + 0.5rem);
+  pointer-events: none;
+  mask-image: radial-gradient(circle at center, black, transparent 82%);
+}
+
+.loadingState {
+  display: grid;
+  gap: var(--space-4);
+  justify-items: center;
+  text-align: center;
+}
+
+.loadingText {
+  color: var(--color-text-soft);
+}
+
+@keyframes login-enter {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card {
+    animation: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .card {
+    width: 100%;
+  }
+
+  .backgroundGlow {
+    width: 28rem;
+    height: 28rem;
+  }
 }
