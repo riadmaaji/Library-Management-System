@@ -257,7 +257,8 @@ export default function LoginPage() {
 
           <div className={styles.note}>
             <span className={styles.noteLabel}>Demo credentials</span>
-            <strong>Demo: admin@example.com / password</strong>
+            <strong>Admin: mozna@example.com / password</strong>
+            <strong>Employee: maaji.riad@mozna.com / password</strong>
           </div>
         </div>
       </Card>

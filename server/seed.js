@@ -16,36 +16,34 @@ async function seed() {
     const hashedPassword = await hashPassword('password');
     const admin = {
       id: uuidv4(),
-      name: 'Admin User',
-      email: 'admin@example.com',
+      name: 'Mozna Platforms',
+      email: 'mozna@example.com',
       password: hashedPassword,
       role: ROLES.ADMIN,
       createdAt: new Date().toISOString(),
     };
 
     db.create(COLLECTIONS.USERS, admin);
-    console.log('Admin user created: admin@example.com / password');
+    console.log('Admin user created: mozna@p.com / password');
   } else {
     console.log('Admin already exists, skipping.');
   }
 
-  const employeeExists = existingUsers.some(
-    (user) => user.email === 'employee@example.com'
-  );
+  const employeeExists = existingUsers.some((user) => user.role === ROLES.EMPLOYEE);
 
   if (!employeeExists) {
     const hashedPassword = await hashPassword('password');
     const employee = {
       id: uuidv4(),
-      name: 'Jane Employee',
-      email: 'employee@example.com',
+      name: 'Riad Maaji',
+      email: 'maaji.riad@mozna.com',
       password: hashedPassword,
       role: ROLES.EMPLOYEE,
       createdAt: new Date().toISOString(),
     };
 
     db.create(COLLECTIONS.USERS, employee);
-    console.log('Employee user created: employee@example.com / password');
+    console.log('Employee user created: maaji.riad@mozna.com / password');
   }
 
   const existingBooks = db.getAll(COLLECTIONS.BOOKS);
