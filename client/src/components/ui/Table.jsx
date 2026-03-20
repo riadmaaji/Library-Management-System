@@ -52,6 +52,11 @@ export function Table({
       aria-label={ariaLabel}
       aria-busy={loading || undefined}
     >
+      {loading ? (
+        <span className={styles.loadingStatus} role="status" aria-live="polite">
+          Loading table data.
+        </span>
+      ) : null}
       <table className={styles.table}>
         <thead className={styles.head}>
           <tr>

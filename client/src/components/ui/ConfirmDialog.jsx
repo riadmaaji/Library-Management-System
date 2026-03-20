@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useId, useState } from 'react';
 import { Button } from './Button';
 import { Modal } from './Modal';
 import styles from './ConfirmDialog.module.css';
@@ -24,6 +24,7 @@ export function ConfirmDialog({
   confirmText = 'Confirm',
   variant = 'danger',
 }) {
+  const messageDescriptionId = useId();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const confirmButtonVariant = variant === 'warning' ? 'primary' : 'danger';
 
@@ -53,9 +54,14 @@ export function ConfirmDialog({
       onClose={onClose}
       title={title}
       ariaLabel={ariaLabel ?? title ?? 'Confirmation dialog'}
+      descriptionId={message != null ? messageDescriptionId : undefined}
       size="sm"
     >
-      {message != null ? <div className={styles.message}>{message}</div> : null}
+      {message != null ? (
+        <div id={messageDescriptionId} className={styles.message}>
+          {message}
+        </div>
+      ) : null}
       <div className={styles.actions}>
         <Button type="button" variant="secondary" onClick={onClose} disabled={isSubmitting}>
           Cancel

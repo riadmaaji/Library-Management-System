@@ -9,6 +9,7 @@ import { ConfirmDialog } from '../../components/ui/ConfirmDialog';
 import { Table } from '../../components/ui/Table';
 import { useAuth } from '../../hooks/useAuth';
 import { useToast } from '../../hooks/useToast';
+import { formatDate } from '../../utils/formatters';
 import styles from './UsersPage.module.css';
 
 function unwrapList(payload) {
@@ -21,23 +22,6 @@ function unwrapList(payload) {
   }
 
   return [];
-}
-
-function formatCreatedDate(value) {
-  if (!value) {
-    return '—';
-  }
-
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) {
-    return '—';
-  }
-
-  return date.toLocaleDateString(undefined, {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-  });
 }
 
 function roleBadgeForRole(role) {
@@ -223,7 +207,7 @@ export default function UsersPage() {
         key: 'createdAt',
         label: 'Created Date',
         render: (row) => (
-          <span className={styles.cellMuted}>{formatCreatedDate(row.createdAt)}</span>
+          <span className={styles.cellMuted}>{formatDate(row.createdAt)}</span>
         ),
       },
       {

@@ -76,6 +76,7 @@ export default function BooksPage() {
   const { showToast } = useToast();
   const [books, setBooks] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [loadFailed, setLoadFailed] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState(ALL_CATEGORIES);
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -91,8 +92,10 @@ export default function BooksPage() {
       try {
         const response = await getBooks();
         setBooks(unwrapList(response));
+        setLoadFailed(false);
       } catch (error) {
         setBooks([]);
+        setLoadFailed(true);
         showToast({
           type: 'error',
           message: getErrorMessage(
@@ -138,10 +141,18 @@ export default function BooksPage() {
   }, [books, searchQuery, selectedCategory]);
 
   const hasActiveFilters = searchQuery.trim() !== '' || selectedCategory !== ALL_CATEGORIES;
-  const emptyMessage =
-    books.length === 0
+  const emptyMessage = loadFailed
+    ? 'We could not load the catalog. Use Try again in the card header or refresh the page.'
+    : books.length === 0
       ? 'No books are in the catalog yet. Add your first title to get started.'
       : 'No books match the current search and category filters.';
+
+  const catalogCardActions =
+    loadFailed && !loading ? (
+      <Button variant="secondary" size="sm" onClick={() => void loadBooks()}>
+        Try again
+      </Button>
+    ) : null;
 
   const handleOpenCreate = useCallback(() => {
     setEditingBook(null);
@@ -294,7 +305,12 @@ export default function BooksPage() {
             the catalog view.
           </p>
         </div>
-        <Button size="lg" icon={<BookStackIcon />} onClick={handleOpenCreate}>
+        <Button
+          className={styles.heroCta}
+          size="lg"
+          icon={<BookStackIcon />}
+          onClick={handleOpenCreate}
+        >
           Add Book
         </Button>
       </section>
@@ -344,6 +360,7 @@ export default function BooksPage() {
       <Card
         title="Library catalog"
         subtitle="Edit titles, monitor stock, and remove books that are no longer in circulation."
+        actions={catalogCardActions}
       >
         <Table
           ariaLabel="Books catalog table"

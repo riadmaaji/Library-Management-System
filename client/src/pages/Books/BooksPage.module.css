@@ -45,6 +45,10 @@
   color: var(--color-text-soft);
 }
 
+.heroCta {
+  flex-shrink: 0;
+}
+
 .filterRow {
   display: grid;
   grid-template-columns: minmax(0, 1.8fr) minmax(14rem, 0.9fr);
@@ -185,6 +189,10 @@
 @media (max-width: 640px) {
   .page {
     gap: var(--space-5);
+  }
+
+  .heroCta {
+    width: 100%;
   }
 
   .availabilityCell {

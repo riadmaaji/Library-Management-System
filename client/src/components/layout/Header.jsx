@@ -47,7 +47,7 @@ export default function Header({ title, isSidebarOpen = false, onMenuToggle }) {
 
         <div className={styles.titleBlock}>
           <span className={styles.eyebrow}>Library workspace</span>
-          <h1 className={styles.title}>{title}</h1>
+          <p className={styles.title}>{title}</p>
         </div>
       </div>
 

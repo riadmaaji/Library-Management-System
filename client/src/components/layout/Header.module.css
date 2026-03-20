@@ -127,3 +127,9 @@
     font-size: 1.65rem;
   }
 }
+
+@media (prefers-reduced-motion: reduce) {
+  .menuButton:hover {
+    transform: none;
+  }
+}

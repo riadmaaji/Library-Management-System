@@ -43,6 +43,26 @@ export default function AppLayout() {
     };
   }, [isMobile, sidebarOpen]);
 
+  useEffect(() => {
+    if (!sidebarOpen || !isMobile) {
+      return undefined;
+    }
+
+    const onKeyDown = (event) => {
+      if (document.querySelector('[role="dialog"][aria-modal="true"]')) {
+        return;
+      }
+
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        setSidebarOpen(false);
+      }
+    };
+
+    document.addEventListener('keydown', onKeyDown);
+    return () => document.removeEventListener('keydown', onKeyDown);
+  }, [isMobile, sidebarOpen]);
+
   return (
     <div className={styles.shell}>
       <Sidebar isMobile={isMobile} isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />

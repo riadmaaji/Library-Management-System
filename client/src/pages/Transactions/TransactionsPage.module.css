@@ -52,15 +52,6 @@
   color: var(--color-text-soft);
 }
 
-.buttonHint {
-  margin: 0;
-  max-width: 16rem;
-  font-size: var(--font-size-sm);
-  line-height: 1.5;
-  text-align: right;
-  color: var(--color-text-soft);
-}
-
 .filterStack {
   display: flex;
   flex-direction: column;
@@ -184,12 +175,6 @@
   .heroActions {
     align-items: flex-start;
   }
-
-  .buttonHint {
-    max-width: none;
-    text-align: left;
-  }
-
 }
 
 @media (max-width: 640px) {

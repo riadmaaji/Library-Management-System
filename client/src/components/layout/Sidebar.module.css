@@ -213,3 +213,15 @@
     display: none;
   }
 }
+
+@media (prefers-reduced-motion: reduce) {
+  .backdrop,
+  .sidebar {
+    transition: none;
+  }
+
+  .closeButton:hover,
+  .navLink:hover {
+    transform: none;
+  }
+}

@@ -4,6 +4,7 @@ import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
 import { Modal } from '../../components/ui/Modal';
 import { useToast } from '../../hooks/useToast';
+import { formatDate } from '../../utils/formatters';
 import styles from './BorrowFormModal.module.css';
 
 const DEFAULT_BORROW_DAYS = '14';
@@ -53,15 +54,6 @@ function validateForm(values) {
   }
 
   return errors;
-}
-
-function formatDuePreviewDate(date) {
-  return date.toLocaleDateString(undefined, {
-    weekday: 'short',
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-  });
 }
 
 export function BorrowFormModal({
@@ -337,7 +329,7 @@ export function BorrowFormModal({
             {duePreview ? (
               <p className={styles.duePreview}>
                 If checked out now, this loan would be due on{' '}
-                <span className={styles.dueDate}>{formatDuePreviewDate(duePreview)}</span>.
+                <span className={styles.dueDate}>{formatDate(duePreview, { weekday: 'short' })}</span>.
               </p>
             ) : (
               <p className={[styles.duePreview, styles.duePreviewMuted].join(' ')}>

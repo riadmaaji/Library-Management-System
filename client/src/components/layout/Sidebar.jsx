@@ -92,6 +92,7 @@ export default function Sidebar({ isMobile = false, isOpen = false, onClose }) {
         type="button"
         className={[styles.backdrop, isOpen ? styles.backdropVisible : ''].filter(Boolean).join(' ')}
         aria-label="Close navigation menu"
+        disabled={isMobile && !isOpen}
         onClick={onClose}
       />
 

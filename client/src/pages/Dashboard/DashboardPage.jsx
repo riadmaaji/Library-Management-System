@@ -1,12 +1,14 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getBooks } from '../../api/services/bookService';
 import { getBorrows } from '../../api/services/borrowService';
 import { getCustomers } from '../../api/services/customerService';
 import { Badge } from '../../components/ui/Badge';
+import { Button } from '../../components/ui/Button';
 import { Card } from '../../components/ui/Card';
 import { Table } from '../../components/ui/Table';
 import { useAuth } from '../../hooks/useAuth';
 import { useToast } from '../../hooks/useToast';
+import { formatDateTime, formatLongDate } from '../../utils/formatters';
 import styles from './DashboardPage.module.css';
 
 const STAT_KEYS = ['books', 'customers', 'borrows', 'overdue'];
@@ -19,29 +21,6 @@ function unwrapList(payload) {
     return payload.data;
   }
   return [];
-}
-
-function formatDateTime(iso) {
-  if (iso == null || iso === '') {
-    return '—';
-  }
-  const d = new Date(iso);
-  if (Number.isNaN(d.getTime())) {
-    return '—';
-  }
-  return d.toLocaleString(undefined, {
-    dateStyle: 'medium',
-    timeStyle: 'short',
-  });
-}
-
-function formatCurrentDate(date) {
-  return date.toLocaleDateString(undefined, {
-    weekday: 'long',
-    month: 'long',
-    day: 'numeric',
-    year: 'numeric',
-  });
 }
 
 function isOverdueBorrow(borrow) {
@@ -69,53 +48,42 @@ export default function DashboardPage() {
   const { showToast } = useToast();
 
   const [loading, setLoading] = useState(true);
+  const [loadFailed, setLoadFailed] = useState(false);
   const [books, setBooks] = useState([]);
   const [customers, setCustomers] = useState([]);
   const [activeBorrows, setActiveBorrows] = useState([]);
 
-  useEffect(() => {
-    let cancelled = false;
+  const loadDashboard = useCallback(async () => {
+    setLoading(true);
+    try {
+      const [booksRes, customersRes, borrowsRes] = await Promise.all([
+        getBooks(),
+        getCustomers(),
+        getBorrows({ status: 'active' }),
+      ]);
 
-    async function load() {
-      setLoading(true);
-      try {
-        const [booksRes, customersRes, borrowsRes] = await Promise.all([
-          getBooks(),
-          getCustomers(),
-          getBorrows({ status: 'active' }),
-        ]);
-
-        if (cancelled) {
-          return;
-        }
-
-        setBooks(unwrapList(booksRes));
-        setCustomers(unwrapList(customersRes));
-        setActiveBorrows(unwrapList(borrowsRes));
-      } catch (error) {
-        console.error('Dashboard data load failed', error);
-        if (!cancelled) {
-          showToast({
-            type: 'error',
-            message: 'Could not load dashboard data. Showing empty figures until you refresh.',
-          });
-          setBooks([]);
-          setCustomers([]);
-          setActiveBorrows([]);
-        }
-      } finally {
-        if (!cancelled) {
-          setLoading(false);
-        }
-      }
+      setBooks(unwrapList(booksRes));
+      setCustomers(unwrapList(customersRes));
+      setActiveBorrows(unwrapList(borrowsRes));
+      setLoadFailed(false);
+    } catch (error) {
+      console.error('Dashboard data load failed', error);
+      showToast({
+        type: 'error',
+        message: 'Could not load dashboard data. Use Try again to reload the overview.',
+      });
+      setBooks([]);
+      setCustomers([]);
+      setActiveBorrows([]);
+      setLoadFailed(true);
+    } finally {
+      setLoading(false);
     }
-
-    load();
-
-    return () => {
-      cancelled = true;
-    };
   }, [showToast]);
+
+  useEffect(() => {
+    void loadDashboard();
+  }, [loadDashboard]);
 
   const metrics = useMemo(() => {
     const totalBooks = books.length;
@@ -147,15 +115,18 @@ export default function DashboardPage() {
   }, [activeBorrows]);
 
   const displayName = user?.name?.trim() || 'Library staff';
-  const currentDateLabel = formatCurrentDate(new Date());
+  const currentDateLabel = formatLongDate(new Date());
+  const availabilityLabel = loadFailed
+    ? 'Overview unavailable'
+    : `Available copies: ${metrics.totalAvailableCopies}`;
 
   const statItems = useMemo(
     () => [
       {
         key: 'books',
         label: 'Total Books',
-        value: metrics.totalBooks,
-        accent: 'info',
+        value: loadFailed ? '—' : metrics.totalBooks,
+        accent: loadFailed ? 'warning' : 'info',
         icon: (
           <svg viewBox="0 0 24 24" aria-hidden="true">
             <path d="M5 4.75A2.75 2.75 0 0 1 7.75 2h10.5A1.75 1.75 0 0 1 20 3.75v14.5A1.75 1.75 0 0 1 18.25 20H7.75A2.75 2.75 0 0 0 5 22.75V4.75Z" />
@@ -168,8 +139,8 @@ export default function DashboardPage() {
       {
         key: 'customers',
         label: 'Total Customers',
-        value: metrics.totalCustomers,
-        accent: 'neutral',
+        value: loadFailed ? '—' : metrics.totalCustomers,
+        accent: loadFailed ? 'warning' : 'neutral',
         icon: (
           <svg viewBox="0 0 24 24" aria-hidden="true">
             <path d="M16.5 19.25a4.75 4.75 0 0 0-9.5 0" />
@@ -181,8 +152,8 @@ export default function DashboardPage() {
       {
         key: 'borrows',
         label: 'Active Borrows',
-        value: metrics.activeBorrowCount,
-        accent: 'success',
+        value: loadFailed ? '—' : metrics.activeBorrowCount,
+        accent: loadFailed ? 'warning' : 'success',
         icon: (
           <svg viewBox="0 0 24 24" aria-hidden="true">
             <path d="M4.75 7.25h8.5a2.25 2.25 0 0 1 2.25 2.25v7.25H7A2.25 2.25 0 0 1 4.75 14.5v-7.25Z" />
@@ -194,8 +165,8 @@ export default function DashboardPage() {
       {
         key: 'overdue',
         label: 'Overdue Books',
-        value: metrics.overdueCount,
-        accent: metrics.overdueCount > 0 ? 'danger' : 'neutral',
+        value: loadFailed ? '—' : metrics.overdueCount,
+        accent: loadFailed ? 'warning' : metrics.overdueCount > 0 ? 'danger' : 'neutral',
         icon: (
           <svg viewBox="0 0 24 24" aria-hidden="true">
             <path d="M12 3.75 20 18.25H4L12 3.75Z" />
@@ -205,7 +176,7 @@ export default function DashboardPage() {
         ),
       },
     ],
-    [metrics]
+    [loadFailed, metrics]
   );
 
   const columns = useMemo(
@@ -242,6 +213,17 @@ export default function DashboardPage() {
     []
   );
 
+  const recentTableActions =
+    loadFailed && !loading ? (
+      <Button variant="secondary" size="sm" onClick={() => void loadDashboard()}>
+        Try again
+      </Button>
+    ) : null;
+
+  const recentEmptyMessage = loadFailed
+    ? 'We could not load recent borrowing activity. Use Try again in the card header or refresh the page.'
+    : 'No active borrows yet. New loans will appear here.';
+
   return (
     <div className={styles.page}>
       <section
@@ -256,11 +238,21 @@ export default function DashboardPage() {
           </h1>
           <div className={styles.heroMeta}>
             <p className={styles.date}>{currentDateLabel}</p>
-            <p className={styles.availability}>Available copies: {metrics.totalAvailableCopies}</p>
+            <p
+              className={`${styles.availability} ${loadFailed ? styles.availabilityWarning : ''}`}
+              role={loadFailed ? 'status' : undefined}
+            >
+              {availabilityLabel}
+            </p>
           </div>
           <p className={styles.lede}>
             Here is a quick read on collection health, lending activity, and the latest circulation from your active loans.
           </p>
+          {loadFailed ? (
+            <p className={styles.loadNotice}>
+              The latest dashboard figures could not be loaded. Use Try again to refresh this overview.
+            </p>
+          ) : null}
         </header>
 
         <section className={styles.statGrid} aria-label="Library statistics">
@@ -293,6 +285,7 @@ export default function DashboardPage() {
         title="Recent Transactions"
         subtitle="Up to five active loans, newest first"
         padding="md"
+        actions={recentTableActions}
       >
         <p className={styles.tableHint}>Borrow and due times use your browser locale.</p>
         <Table
@@ -300,7 +293,7 @@ export default function DashboardPage() {
           loading={loading}
           columns={columns}
           data={recentTransactions}
-          emptyMessage="No active borrows yet. New loans will appear here."
+          emptyMessage={recentEmptyMessage}
         />
       </Card>
     </div>

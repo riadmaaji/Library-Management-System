@@ -6,6 +6,7 @@ import { Input } from '../../components/ui/Input';
 import { Spinner } from '../../components/ui/Spinner';
 import { useAuth } from '../../hooks/useAuth';
 import { useToast } from '../../hooks/useToast';
+import { formatLongDate } from '../../utils/formatters';
 import styles from './LoginPage.module.css';
 
 function EmailIcon() {
@@ -75,16 +76,7 @@ export default function LoginPage() {
   const [errors, setErrors] = useState({});
   const [formError, setFormError] = useState('');
 
-  const welcomeDate = useMemo(
-    () =>
-      new Intl.DateTimeFormat('en-US', {
-        weekday: 'long',
-        month: 'long',
-        day: 'numeric',
-        year: 'numeric',
-      }).format(new Date()),
-    []
-  );
+  const welcomeDate = useMemo(() => formatLongDate(new Date()), []);
 
   if (loading) {
     return (

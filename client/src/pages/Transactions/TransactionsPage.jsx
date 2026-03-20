@@ -11,6 +11,7 @@ import { SearchBar } from '../../components/ui/SearchBar';
 import { ConfirmDialog } from '../../components/ui/ConfirmDialog';
 import { Table } from '../../components/ui/Table';
 import { useToast } from '../../hooks/useToast';
+import { formatCurrency, formatDate } from '../../utils/formatters';
 import styles from './TransactionsPage.module.css';
 
 const STATUS_FILTER_ALL = 'all';
@@ -55,23 +56,6 @@ function normalizeQuery(value) {
   return String(value ?? '').trim().toLowerCase();
 }
 
-function formatTransactionDate(value) {
-  if (!value) {
-    return '—';
-  }
-
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) {
-    return '—';
-  }
-
-  return date.toLocaleDateString(undefined, {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-  });
-}
-
 function isBorrowReturned(borrow) {
   return borrow?.returnedAt != null && borrow.returnedAt !== '';
 }
@@ -99,20 +83,6 @@ function getBorrowStatusMeta(borrow) {
   }
 
   return { label: 'Active', variant: 'success' };
-}
-
-function formatPenaltyAmount(value) {
-  const n = Number(value);
-  if (!Number.isFinite(n) || n <= 0) {
-    return '—';
-  }
-
-  return n.toLocaleString(undefined, {
-    style: 'currency',
-    currency: 'USD',
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  });
 }
 
 /** Matches server default `PENALTY_PER_DAY` in `server/src/config/env.js` for preview only. */
@@ -174,6 +144,8 @@ export default function TransactionsPage() {
   const [customers, setCustomers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [borrowsLoadFailed, setBorrowsLoadFailed] = useState(false);
+  const [booksLoadFailed, setBooksLoadFailed] = useState(false);
+  const [customersLoadFailed, setCustomersLoadFailed] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState(STATUS_FILTER_ALL);
   const [borrowModalOpen, setBorrowModalOpen] = useState(false);
@@ -206,15 +178,19 @@ export default function TransactionsPage() {
 
       if (booksResult.status === 'fulfilled') {
         setBooks(unwrapList(booksResult.value));
+        setBooksLoadFailed(false);
       } else {
         setBooks([]);
+        setBooksLoadFailed(true);
         failedResources.push('books');
       }
 
       if (customersResult.status === 'fulfilled') {
         setCustomers(unwrapList(customersResult.value));
+        setCustomersLoadFailed(false);
       } else {
         setCustomers([]);
+        setCustomersLoadFailed(true);
         failedResources.push('customers');
       }
 
@@ -278,11 +254,23 @@ export default function TransactionsPage() {
   }, [searchQuery, statusFilter, transactions]);
 
   const prefetchedSupportSummary = useMemo(() => {
+    if (booksLoadFailed && customersLoadFailed) {
+      return 'Books and customers could not be loaded for the upcoming borrow flow.';
+    }
+
+    if (booksLoadFailed) {
+      return `${customers.length} ${customers.length === 1 ? 'customer' : 'customers'} loaded for the upcoming borrow flow. Books could not be loaded.`;
+    }
+
+    if (customersLoadFailed) {
+      return `${books.length} ${books.length === 1 ? 'book' : 'books'} loaded for the upcoming borrow flow. Customers could not be loaded.`;
+    }
+
     const bookLabel = books.length === 1 ? 'book' : 'books';
     const customerLabel = customers.length === 1 ? 'customer' : 'customers';
 
     return `${books.length} ${bookLabel} and ${customers.length} ${customerLabel} are loaded for the upcoming borrow flow.`;
-  }, [books, customers]);
+  }, [books, booksLoadFailed, customers, customersLoadFailed]);
 
   const hasActiveFilters = searchQuery.trim() !== '' || statusFilter !== STATUS_FILTER_ALL;
 
@@ -341,7 +329,7 @@ export default function TransactionsPage() {
       showToast({
         type: 'success',
         message: hasPenalty
-          ? `Return recorded. Penalty: ${formatPenaltyAmount(penaltyRaw)}.`
+          ? `Return recorded. Penalty: ${formatCurrency(penaltyRaw)}.`
           : 'Return recorded.',
       });
       return true;
@@ -378,19 +366,19 @@ export default function TransactionsPage() {
         key: 'borrowedAt',
         label: 'Borrowed date',
         render: (row) => (
-          <span className={styles.cellMuted}>{formatTransactionDate(row.borrowedAt)}</span>
+          <span className={styles.cellMuted}>{formatDate(row.borrowedAt)}</span>
         ),
       },
       {
         key: 'dueAt',
         label: 'Due date',
-        render: (row) => <span className={styles.cellMuted}>{formatTransactionDate(row.dueAt)}</span>,
+        render: (row) => <span className={styles.cellMuted}>{formatDate(row.dueAt)}</span>,
       },
       {
         key: 'returnedAt',
         label: 'Return date',
         render: (row) => (
-          <span className={styles.cellMuted}>{formatTransactionDate(row.returnedAt)}</span>
+          <span className={styles.cellMuted}>{formatDate(row.returnedAt)}</span>
         ),
       },
       {
@@ -404,7 +392,9 @@ export default function TransactionsPage() {
         key: 'penalty',
         label: 'Penalty',
         render: (row) => (
-          <span className={styles.cellMuted}>{formatPenaltyAmount(row.penaltyAmount)}</span>
+          <span className={styles.cellMuted}>
+            {formatCurrency(row.penaltyAmount, { omitIfNonPositive: true })}
+          </span>
         ),
       },
       {
@@ -418,6 +408,17 @@ export default function TransactionsPage() {
               <Button
                 size="sm"
                 variant="secondary"
+                aria-label={
+                  row.bookTitle && row.borrowerName
+                    ? `Return "${row.bookTitle}" for ${row.borrowerName}`
+                    : row.bookTitle
+                      ? `Return "${row.bookTitle}"`
+                      : row.borrowerName
+                        ? `Return book for ${row.borrowerName}`
+                        : row.id != null && String(row.id).trim() !== ''
+                          ? `Return loan ${row.id}`
+                          : 'Return this loan'
+                }
                 onClick={() => setPendingReturnBorrow(row)}
               >
                 Return
@@ -431,10 +432,17 @@ export default function TransactionsPage() {
   );
 
   const emptyMessage = borrowsLoadFailed
-    ? 'Borrowing records could not be loaded. Refresh and try again.'
+    ? 'We could not load borrowing records. Use Try again in the card header or refresh the page.'
     : transactions.length === 0
       ? 'No borrowing records yet.'
       : 'No borrowing records match the current filters.';
+
+  const borrowingActivityActions =
+    borrowsLoadFailed && !loading ? (
+      <Button variant="secondary" size="sm" onClick={() => void refreshCirculationData()}>
+        Try again
+      </Button>
+    ) : null;
 
   const returnConfirmPreview =
     pendingReturnBorrow != null ? getReturnOverduePreview(pendingReturnBorrow) : null;
@@ -506,6 +514,7 @@ export default function TransactionsPage() {
       <Card
         title="Borrowing activity"
         subtitle="Active loans show as Active or Overdue; returned loans show the return date and any recorded penalty."
+        actions={borrowingActivityActions}
       >
         <Table
           ariaLabel="Borrowing transactions table"
@@ -562,18 +571,19 @@ export default function TransactionsPage() {
                 </dd>
                 <dt>Borrowed date</dt>
                 <dd className={styles.returnConfirmValue}>
-                  {formatTransactionDate(pendingReturnBorrow.borrowedAt)}
+                  {formatDate(pendingReturnBorrow.borrowedAt)}
                 </dd>
                 <dt>Due date</dt>
                 <dd className={styles.returnConfirmValue}>
-                  {formatTransactionDate(pendingReturnBorrow.dueAt)}
+                  {formatDate(pendingReturnBorrow.dueAt)}
                 </dd>
               </dl>
               {returnConfirmPreview ? (
                 <p className={styles.returnConfirmOverdue} role="status">
                   Overdue by {returnConfirmPreview.lateDays}{' '}
                   {returnConfirmPreview.lateDays === 1 ? 'day' : 'days'}. Predicted penalty:{' '}
-                  {formatPenaltyAmount(returnConfirmPreview.predictedPenalty)} (if returned now).
+                  {formatCurrency(returnConfirmPreview.predictedPenalty, { omitIfNonPositive: true })}{' '}
+                  (if returned now).
                 </p>
               ) : null}
             </div>

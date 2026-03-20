@@ -5,6 +5,7 @@ import { Card } from '../../components/ui/Card';
 import { SearchBar } from '../../components/ui/SearchBar';
 import { Table } from '../../components/ui/Table';
 import { useToast } from '../../hooks/useToast';
+import { formatDate } from '../../utils/formatters';
 import { CustomerFormModal } from './CustomerFormModal';
 import styles from './CustomersPage.module.css';
 
@@ -32,23 +33,6 @@ function normalizeQuery(value) {
   return String(value ?? '').trim().toLowerCase();
 }
 
-function formatRegisteredDate(value) {
-  if (!value) {
-    return '—';
-  }
-
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) {
-    return '—';
-  }
-
-  return date.toLocaleDateString(undefined, {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-  });
-}
-
 function CustomersIcon() {
   return (
     <svg
@@ -72,6 +56,7 @@ export default function CustomersPage() {
   const { showToast } = useToast();
   const [customers, setCustomers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [loadFailed, setLoadFailed] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingCustomer, setEditingCustomer] = useState(null);
@@ -85,8 +70,10 @@ export default function CustomersPage() {
       try {
         const response = await getCustomers();
         setCustomers(unwrapList(response));
+        setLoadFailed(false);
       } catch (error) {
         setCustomers([]);
+        setLoadFailed(true);
         showToast({
           type: 'error',
           message: getErrorMessage(
@@ -118,10 +105,18 @@ export default function CustomersPage() {
     });
   }, [customers, searchQuery]);
 
-  const emptyMessage =
-    customers.length === 0
+  const emptyMessage = loadFailed
+    ? 'We could not load customers. Use Try again in the card header or refresh the page.'
+    : customers.length === 0
       ? 'No customers are registered yet. Add your first customer to get started.'
       : 'No customers match the current search.';
+
+  const customersTableActions =
+    loadFailed && !loading ? (
+      <Button variant="secondary" size="sm" onClick={() => void loadCustomers()}>
+        Try again
+      </Button>
+    ) : null;
 
   const handleOpenCreate = useCallback(() => {
     setEditingCustomer(null);
@@ -183,7 +178,7 @@ export default function CustomersPage() {
       {
         key: 'createdAt',
         label: 'Registered',
-        render: (row) => <span className={styles.cellMuted}>{formatRegisteredDate(row.createdAt)}</span>,
+        render: (row) => <span className={styles.cellMuted}>{formatDate(row.createdAt)}</span>,
       },
       {
         key: 'actions',
@@ -211,7 +206,12 @@ export default function CustomersPage() {
             details without leaving the desk view.
           </p>
         </div>
-        <Button size="lg" icon={<CustomersIcon />} onClick={handleOpenCreate}>
+        <Button
+          className={styles.heroCta}
+          size="lg"
+          icon={<CustomersIcon />}
+          onClick={handleOpenCreate}
+        >
           Add Customer
         </Button>
       </section>
@@ -243,6 +243,7 @@ export default function CustomersPage() {
       <Card
         title="Registered customers"
         subtitle="Review contact details and keep borrower records accurate before issuing new loans."
+        actions={customersTableActions}
       >
         <Table
           ariaLabel="Customers table"

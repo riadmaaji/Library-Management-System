@@ -38,10 +38,11 @@ function getFocusableElements(container) {
  * @param {() => void} props.onClose
  * @param {string} [props.title]
  * @param {string} [props.ariaLabel]
+ * @param {string} [props.descriptionId] — id of element that describes the dialog (e.g. confirm message)
  * @param {import('react').ReactNode} [props.children]
  * @param {'sm'|'md'|'lg'} [props.size='md']
  */
-export function Modal({ isOpen, onClose, title, ariaLabel, children, size = 'md' }) {
+export function Modal({ isOpen, onClose, title, ariaLabel, descriptionId, children, size = 'md' }) {
   const titleId = useId();
   const panelRef = useRef(null);
   const sizeStyle = sizeClass[size] ?? sizeClass.md;
@@ -138,6 +139,7 @@ export function Modal({ isOpen, onClose, title, ariaLabel, children, size = 'md'
           role="dialog"
           aria-modal="true"
           aria-labelledby={title != null ? titleId : undefined}
+          aria-describedby={descriptionId}
           aria-label={title == null ? fallbackLabel : undefined}
           tabIndex={-1}
         >
