@@ -26,6 +26,20 @@ function isValidEmail(value) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
 }
 
+function unwrapSavedEntity(payload) {
+  if (
+    payload &&
+    typeof payload === 'object' &&
+    payload.data != null &&
+    typeof payload.data === 'object' &&
+    !Array.isArray(payload.data)
+  ) {
+    return payload.data;
+  }
+
+  return payload;
+}
+
 function validateForm(values) {
   const errors = {};
   const fullName = values.fullName.trim();
@@ -96,22 +110,15 @@ export function CustomerFormModal({ isOpen, onClose, onSaved, customer }) {
       phone: values.phone.trim(),
     };
 
+    let savedEntity;
     try {
       if (isEditMode) {
-        await updateCustomer(customer.id, payload);
+        const raw = await updateCustomer(customer.id, payload);
+        savedEntity = unwrapSavedEntity(raw);
       } else {
-        await createCustomer(payload);
+        const raw = await createCustomer(payload);
+        savedEntity = unwrapSavedEntity(raw);
       }
-
-      showToast({
-        type: 'success',
-        message: isEditMode
-          ? `"${payload.fullName}" was updated successfully.`
-          : `"${payload.fullName}" was added to the customer list.`,
-      });
-
-      await onSaved?.();
-      onClose();
     } catch (error) {
       const message = getErrorMessage(
         error,
@@ -128,7 +135,29 @@ export function CustomerFormModal({ isOpen, onClose, onSaved, customer }) {
           message,
         });
       }
+
+      setSubmitting(false);
+      return;
+    }
+
+    showToast({
+      type: 'success',
+      message: isEditMode
+        ? `"${payload.fullName}" was updated successfully.`
+        : `"${payload.fullName}" was added to the customer list.`,
+    });
+
+    try {
+      await onSaved?.(savedEntity);
+    } catch {
+      showToast({
+        type: 'error',
+        message: isEditMode
+          ? 'The customer was updated, but the customer list could not be refreshed.'
+          : 'The customer was created, but the customer list could not be refreshed.',
+      });
     } finally {
+      onClose();
       setSubmitting(false);
     }
   }
