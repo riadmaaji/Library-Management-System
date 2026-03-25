@@ -249,7 +249,7 @@ export default function LoginPage() {
 
           <div className={styles.note}>
             <span className={styles.noteLabel}>Demo credentials</span>
-            <strong>Admin: mozna@example.com / password</strong>
+            <strong>Admin: admin@mozna.com / password</strong>
             <strong>Employee: maaji.riad@mozna.com / password</strong>
           </div>
         </div>
