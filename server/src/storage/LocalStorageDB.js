@@ -54,6 +54,12 @@ class LocalStorageDB {
     return item;
   }
 
+  replaceAll(collection, items) {
+    const nextItems = Array.isArray(items) ? [...items] : [];
+    this._writeCollection(collection, nextItems);
+    return nextItems;
+  }
+
   update(collection, id, updates) {
     const items = this.getAll(collection);
     const itemIndex = items.findIndex((item) => item.id === id);

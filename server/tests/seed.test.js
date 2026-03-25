@@ -17,14 +17,17 @@ const COLLECTIONS_UNDER_TEST = [
 ];
 
 /** Avoid node-localstorage disk renames (Windows EPERM flakes) during tests. */
-function createMemoryStorage() {
-  const data = Object.create(null);
+function createMemoryStorage(initialData = {}, onSetItem) {
+  const data = Object.assign(Object.create(null), initialData);
   return {
     getItem(key) {
       return Object.prototype.hasOwnProperty.call(data, key) ? data[key] : null;
     },
     setItem(key, value) {
       data[key] = String(value);
+      if (onSetItem) {
+        onSetItem(key, String(value));
+      }
     },
   };
 }
@@ -240,6 +243,33 @@ test('when books and customers are empty, seed() adds catalog and customers meet
       String(c.phone).trim() !== ''
   );
   assert.ok(phoneOnly.length >= 1, 'expected at least one phone-only customer');
+});
+
+test('when collections are empty, seed() writes each collection once', async () => {
+  const { seed } = require('../seed');
+  const writeCounts = Object.create(null);
+
+  db.storage = createMemoryStorage({}, (key) => {
+    writeCounts[key] = (writeCounts[key] || 0) + 1;
+  });
+
+  await seed();
+
+  assert.strictEqual(
+    writeCounts[COLLECTIONS.USERS],
+    1,
+    'users should be written once during seed'
+  );
+  assert.strictEqual(
+    writeCounts[COLLECTIONS.BOOKS],
+    1,
+    'books should be written once during seed'
+  );
+  assert.strictEqual(
+    writeCounts[COLLECTIONS.CUSTOMERS],
+    1,
+    'customers should be written once during seed'
+  );
 });
 
 test('when users collection already has data, seed() does not add users', async () => {

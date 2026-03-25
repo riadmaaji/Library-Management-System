@@ -181,9 +181,7 @@ async function seed() {
       createdAt: new Date().toISOString(),
     }));
 
-    seededUsers.forEach((user) => {
-      db.create(COLLECTIONS.USERS, user);
-    });
+    db.replaceAll(COLLECTIONS.USERS, seededUsers);
     console.log('Admin and employee users created (admin@mozna.com, maaji.riad@mozna.com / password)');
   } else {
     console.log('Users already present, skipping user seed.');
@@ -191,9 +189,12 @@ async function seed() {
 
   const existingBooks = db.getAll(COLLECTIONS.BOOKS);
   if (existingBooks.length === 0) {
-    SEEDED_BOOKS.forEach((book) => {
-      db.create(COLLECTIONS.BOOKS, { id: uuidv4(), ...book });
-    });
+    const seededBooks = SEEDED_BOOKS.map((book) => ({
+      id: uuidv4(),
+      ...book,
+    }));
+
+    db.replaceAll(COLLECTIONS.BOOKS, seededBooks);
 
     console.log(`${SEEDED_BOOKS.length} sample books seeded.`);
   } else {
@@ -202,13 +203,13 @@ async function seed() {
 
   const existingCustomers = db.getAll(COLLECTIONS.CUSTOMERS);
   if (existingCustomers.length === 0) {
-    SEEDED_CUSTOMERS.forEach((customer) => {
-      db.create(COLLECTIONS.CUSTOMERS, {
-        id: uuidv4(),
-        ...customer,
-        createdAt: new Date().toISOString(),
-      });
-    });
+    const seededCustomers = SEEDED_CUSTOMERS.map((customer) => ({
+      id: uuidv4(),
+      ...customer,
+      createdAt: new Date().toISOString(),
+    }));
+
+    db.replaceAll(COLLECTIONS.CUSTOMERS, seededCustomers);
 
     console.log(`${SEEDED_CUSTOMERS.length} sample customers seeded.`);
   } else {
