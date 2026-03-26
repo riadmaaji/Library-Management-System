@@ -187,7 +187,6 @@ export function CustomerFormModal({ isOpen, onClose, onSaved, customer }) {
             required
             disabled={submitting}
             autoFocus
-            placeholder="Alice Johnson"
           />
 
           <Input
@@ -198,7 +197,6 @@ export function CustomerFormModal({ isOpen, onClose, onSaved, customer }) {
             onChange={handleChange}
             error={errors.email}
             disabled={submitting}
-            placeholder="alice@example.com"
           />
 
           <Input
@@ -208,7 +206,6 @@ export function CustomerFormModal({ isOpen, onClose, onSaved, customer }) {
             onChange={handleChange}
             error={errors.phone}
             disabled={submitting}
-            placeholder="123-456-7890"
           />
         </div>
 

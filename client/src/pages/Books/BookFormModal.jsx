@@ -163,7 +163,6 @@ export function BookFormModal({ isOpen, onClose, onSaved, book }) {
             required
             disabled={submitting}
             autoFocus
-            placeholder="The Pragmatic Programmer"
           />
 
           <Input
@@ -174,7 +173,6 @@ export function BookFormModal({ isOpen, onClose, onSaved, book }) {
             error={errors.author}
             required
             disabled={submitting}
-            placeholder="David Thomas & Andrew Hunt"
           />
 
           <Input
@@ -185,7 +183,6 @@ export function BookFormModal({ isOpen, onClose, onSaved, book }) {
             error={errors.isbn}
             required
             disabled={submitting}
-            placeholder="978-0135957059"
           />
 
           <Input
@@ -196,7 +193,6 @@ export function BookFormModal({ isOpen, onClose, onSaved, book }) {
             error={errors.category}
             required
             disabled={submitting}
-            placeholder="Technology"
           />
 
           <Input

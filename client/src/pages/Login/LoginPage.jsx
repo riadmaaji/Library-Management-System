@@ -192,7 +192,6 @@ export default function LoginPage() {
               onChange={handleEmailChange}
               error={errors.email}
               icon={<EmailIcon />}
-              placeholder="name@library.com"
               required
               disabled={submitting}
             />
@@ -219,7 +218,6 @@ export default function LoginPage() {
                   autoComplete="current-password"
                   value={password}
                   onChange={handlePasswordChange}
-                  placeholder="Enter your password"
                   disabled={submitting}
                   required
                   aria-invalid={errors.password ? 'true' : undefined}

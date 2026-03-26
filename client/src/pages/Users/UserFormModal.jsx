@@ -259,7 +259,6 @@ export function UserFormModal({ isOpen, onClose, onSaved, user, isEditingSelf = 
               required
               disabled={submitting}
               autoFocus
-              placeholder="Jordan Lee"
             />
           </div>
 
@@ -273,7 +272,6 @@ export function UserFormModal({ isOpen, onClose, onSaved, user, isEditingSelf = 
               error={errors.email}
               required
               disabled={submitting}
-              placeholder="jordan@library.org"
             />
           </div>
 
@@ -288,7 +286,6 @@ export function UserFormModal({ isOpen, onClose, onSaved, user, isEditingSelf = 
               required={!isEditMode}
               disabled={submitting}
               autoComplete="new-password"
-              placeholder={isEditMode ? '••••••••' : 'At least 6 characters'}
               hint={isEditMode ? undefined : 'Minimum 6 characters.'}
             />
             {isEditMode ? (
