@@ -25,7 +25,7 @@ export function Toast({ id, message, type, exiting, onDismiss, onExitComplete })
       <button
         type="button"
         className={styles.close}
-        onClick={onDismiss}
+        onClick={() => onDismiss(id)}
         aria-label="Dismiss notification"
       >
         <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" focusable="false">

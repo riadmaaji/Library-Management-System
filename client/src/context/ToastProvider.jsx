@@ -4,6 +4,7 @@ import toastStyles from '../components/ui/Toast.module.css';
 import { ToastContext } from './toastContext';
 
 const DEFAULT_DURATION_MS = 5000;
+const EXIT_ANIMATION_BUFFER_MS = 340;
 
 function createToastId() {
   if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
@@ -31,10 +32,32 @@ export function ToastProvider({ children }) {
       window.clearTimeout(pending);
       timeoutsRef.current.delete(id);
     }
+
+    let shouldScheduleFallback = false;
     setToasts((prev) =>
-      prev.map((t) => (t.id === id ? { ...t, exiting: true } : t))
+      prev.map((t) => {
+        if (t.id !== id) {
+          return t;
+        }
+
+        if (t.exiting) {
+          return t;
+        }
+
+        shouldScheduleFallback = true;
+        return { ...t, exiting: true };
+      })
     );
-  }, []);
+
+    // Safety-net removal in case animationend is skipped.
+    if (shouldScheduleFallback) {
+      const fallbackId = window.setTimeout(() => {
+        timeoutsRef.current.delete(id);
+        removeToast(id);
+      }, EXIT_ANIMATION_BUFFER_MS);
+      timeoutsRef.current.set(id, fallbackId);
+    }
+  }, [removeToast]);
 
   const handleExitComplete = useCallback(
     (id) => {
@@ -95,7 +118,7 @@ export function ToastProvider({ children }) {
             message={t.message}
             type={t.type}
             exiting={Boolean(t.exiting)}
-            onDismiss={() => dismissToast(t.id)}
+            onDismiss={dismissToast}
             onExitComplete={handleExitComplete}
           />
         ))}

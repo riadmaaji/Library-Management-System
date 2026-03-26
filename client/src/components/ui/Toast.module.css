@@ -1,6 +1,6 @@
 .region {
   position: fixed;
-  top: var(--space-4);
+  bottom: var(--space-4);
   right: var(--space-4);
   z-index: 2000;
   display: flex;
@@ -27,6 +27,7 @@
   box-shadow: var(--shadow-md);
   background: var(--color-surface-strong);
   animation: toastIn var(--transition-base) ease forwards;
+  will-change: opacity, transform, filter;
 }
 
 @keyframes toastIn {
@@ -44,17 +45,19 @@
 @keyframes toastOut {
   from {
     opacity: 1;
-    transform: translateX(0);
+    transform: translateX(0) scale(1);
+    filter: blur(0);
   }
 
   to {
     opacity: 0;
-    transform: translateX(100%);
+    transform: translateX(18px) scale(0.985);
+    filter: blur(1px);
   }
 }
 
 .exiting {
-  animation: toastOut var(--transition-fast) ease forwards;
+  animation: toastOut 220ms ease forwards;
 }
 
 .message {
