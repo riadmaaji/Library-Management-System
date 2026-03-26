@@ -245,7 +245,7 @@ test('when books and customers are empty, seed() adds catalog and customers meet
   assert.ok(phoneOnly.length >= 1, 'expected at least one phone-only customer');
 });
 
-test('when collections are empty, seed() writes each collection once', async () => {
+test('when collections are empty, seed() writes expected collections including transactions', async () => {
   const { seed } = require('../seed');
   const writeCounts = Object.create(null);
 
@@ -255,6 +255,9 @@ test('when collections are empty, seed() writes each collection once', async () 
 
   await seed();
 
+  const seededBorrows = db.getAll(COLLECTIONS.BORROWS);
+  const activeBorrowCount = seededBorrows.filter((borrow) => borrow.returnedAt == null).length;
+
   assert.strictEqual(
     writeCounts[COLLECTIONS.USERS],
     1,
@@ -262,13 +265,18 @@ test('when collections are empty, seed() writes each collection once', async () 
   );
   assert.strictEqual(
     writeCounts[COLLECTIONS.BOOKS],
-    1,
-    'books should be written once during seed'
+    1 + activeBorrowCount,
+    'books should be written once initially, then once per active seeded borrow'
   );
   assert.strictEqual(
     writeCounts[COLLECTIONS.CUSTOMERS],
     1,
     'customers should be written once during seed'
+  );
+  assert.strictEqual(
+    writeCounts[COLLECTIONS.BORROWS],
+    1,
+    'borrows should be written once during seed'
   );
 });
 

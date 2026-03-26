@@ -5,6 +5,7 @@ const { v4: uuidv4 } = require('uuid');
 const db = require('./src/storage/LocalStorageDB');
 const { hashPassword } = require('./src/utils/password');
 const { COLLECTIONS, ROLES } = require('./src/config/constants');
+const { PENALTY_PER_DAY } = require('./src/config/env');
 
 const SEEDED_USERS = [
   {
@@ -167,6 +168,45 @@ const SEEDED_CUSTOMERS = [
   },
 ];
 
+function toIsoDaysFromNow(daysOffset) {
+  const date = new Date();
+  date.setDate(date.getDate() + daysOffset);
+  return date.toISOString();
+}
+
+function buildBorrowRecord({
+  customerId,
+  bookId,
+  borrowedDaysAgo,
+  borrowDurationDays,
+  returnedDaysAgo = null,
+}) {
+  const borrowedAt = toIsoDaysFromNow(-borrowedDaysAgo);
+  const dueAt = toIsoDaysFromNow(-borrowedDaysAgo + borrowDurationDays);
+  const returnedAt = returnedDaysAgo == null ? null : toIsoDaysFromNow(-returnedDaysAgo);
+
+  let penaltyAmount = 0;
+  if (returnedAt !== null) {
+    const due = new Date(dueAt);
+    const returned = new Date(returnedAt);
+    if (returned.getTime() > due.getTime()) {
+      const msPerDay = 24 * 60 * 60 * 1000;
+      const lateDays = Math.ceil((returned.getTime() - due.getTime()) / msPerDay);
+      penaltyAmount = lateDays * PENALTY_PER_DAY;
+    }
+  }
+
+  return {
+    id: uuidv4(),
+    customerId,
+    bookId,
+    borrowedAt,
+    dueAt,
+    returnedAt,
+    penaltyAmount,
+  };
+}
+
 async function seed() {
   console.log('Seeding database...');
 
@@ -214,6 +254,65 @@ async function seed() {
     console.log(`${SEEDED_CUSTOMERS.length} sample customers seeded.`);
   } else {
     console.log('Customers already present, skipping customer seed.');
+  }
+
+  const existingBorrows = db.getAll(COLLECTIONS.BORROWS);
+  if (existingBorrows.length === 0) {
+    const books = db.getAll(COLLECTIONS.BOOKS);
+    const customers = db.getAll(COLLECTIONS.CUSTOMERS);
+
+    if (books.length >= 4 && customers.length >= 4) {
+      const sampleBorrows = [
+        // Active and still on time.
+        buildBorrowRecord({
+          customerId: customers[0].id,
+          bookId: books[0].id,
+          borrowedDaysAgo: 2,
+          borrowDurationDays: 14,
+        }),
+        // Active and overdue.
+        buildBorrowRecord({
+          customerId: customers[1].id,
+          bookId: books[1].id,
+          borrowedDaysAgo: 21,
+          borrowDurationDays: 14,
+        }),
+        // Returned on time.
+        buildBorrowRecord({
+          customerId: customers[2].id,
+          bookId: books[2].id,
+          borrowedDaysAgo: 10,
+          borrowDurationDays: 7,
+          returnedDaysAgo: 4,
+        }),
+        // Returned late.
+        buildBorrowRecord({
+          customerId: customers[3].id,
+          bookId: books[3].id,
+          borrowedDaysAgo: 28,
+          borrowDurationDays: 10,
+          returnedDaysAgo: 8,
+        }),
+      ];
+
+      db.replaceAll(COLLECTIONS.BORROWS, sampleBorrows);
+
+      const activeBorrows = sampleBorrows.filter((borrow) => borrow.returnedAt == null);
+      activeBorrows.forEach((borrow) => {
+        const book = db.getById(COLLECTIONS.BOOKS, borrow.bookId);
+        if (!book) {
+          return;
+        }
+        const nextAvailable = Math.max(0, Number(book.availableCopies) - 1);
+        db.update(COLLECTIONS.BOOKS, book.id, { availableCopies: nextAvailable });
+      });
+
+      console.log(`${sampleBorrows.length} sample transactions seeded.`);
+    } else {
+      console.log('Not enough books/customers available to seed transactions.');
+    }
+  } else {
+    console.log('Transactions already present, skipping transaction seed.');
   }
 
   console.log('Seeding complete!');
