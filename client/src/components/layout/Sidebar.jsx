@@ -47,12 +47,10 @@ function NavIcon({ name }) {
     case 'transactions':
       return (
         <svg {...commonProps}>
-          <path d="M17 3h4v4" />
-          <path d="M7 21H3v-4" />
-          <path d="M21 7l-5-5" />
-          <path d="M3 17l5 5" />
-          <path d="M21 7H9a6 6 0 0 0-6 6v0" />
-          <path d="M3 17h12a6 6 0 0 0 6-6v0" />
+          <path d="M4 8h12" />
+          <path d="m16 4 4 4-4 4" />
+          <path d="M20 16H8" />
+          <path d="m8 12-4 4 4 4" />
         </svg>
       );
     case 'users':
