@@ -165,7 +165,13 @@ ol[role='list'] {
   padding: 0;
 }
 
-:focus-visible {
+:where(
+    a,
+    button,
+    [role='button'],
+    [tabindex]:not([tabindex='-1']),
+    summary
+  ):focus-visible {
   outline: 3px solid rgba(33, 69, 74, 0.45);
   outline-offset: 3px;
   border-radius: var(--radius-sm);

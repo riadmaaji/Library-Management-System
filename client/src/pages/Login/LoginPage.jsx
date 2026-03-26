@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { Button } from '../../components/ui/Button';
 import { Card } from '../../components/ui/Card';
@@ -6,7 +6,6 @@ import { Input } from '../../components/ui/Input';
 import { Spinner } from '../../components/ui/Spinner';
 import { useAuth } from '../../hooks/useAuth';
 import { useToast } from '../../hooks/useToast';
-import { formatLongDate } from '../../utils/formatters';
 import styles from './LoginPage.module.css';
 
 function EmailIcon() {
@@ -75,8 +74,6 @@ export default function LoginPage() {
   const [submitting, setSubmitting] = useState(false);
   const [errors, setErrors] = useState({});
   const [formError, setFormError] = useState('');
-
-  const welcomeDate = useMemo(() => formatLongDate(new Date()), []);
 
   if (loading) {
     return (
@@ -168,15 +165,6 @@ export default function LoginPage() {
         padding="lg"
       >
         <div className={styles.content}>
-          <div className={styles.heroCopy}>
-            <span className={styles.eyebrow}>Warm editorial access</span>
-            <p className={styles.description}>
-              Step back into a quieter workspace for books, borrowers, and circulation. Sign in to
-              reach your library dashboard.
-            </p>
-            <p className={styles.date}>{welcomeDate}</p>
-          </div>
-
           <form className={styles.form} onSubmit={handleSubmit} noValidate>
             {formError ? (
               <div className={styles.errorBanner} role="alert">
