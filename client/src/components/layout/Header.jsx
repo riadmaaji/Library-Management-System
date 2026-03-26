@@ -52,12 +52,12 @@ export default function Header({ title, isSidebarOpen = false, onMenuToggle }) {
       </div>
 
       <div className={styles.profile}>
-        <div className={styles.avatar} aria-hidden="true">
-          {getInitials(user?.name ?? 'Library User')}
-        </div>
         <div className={styles.profileText}>
           <span className={styles.profileName}>{user?.name ?? 'Library User'}</span>
           <span className={styles.profileRole}>{user?.role ?? 'Staff'}</span>
+        </div>
+        <div className={styles.avatar} aria-hidden="true">
+          {getInitials(user?.name ?? 'Library User')}
         </div>
       </div>
     </header>
