@@ -29,6 +29,23 @@ npm install
 npm run install:all
 ```
 
+### Environment setup
+Create local environment files from the provided examples:
+
+```bash
+cp server/.env.example server/.env
+cp client/.env.example client/.env
+```
+
+If you are using PowerShell:
+
+```powershell
+Copy-Item server/.env.example server/.env
+Copy-Item client/.env.example client/.env
+```
+
+Then adjust values as needed (especially `JWT_SECRET` in `server/.env`).
+
 ### Seed the database
 ```bash
 npm run seed
