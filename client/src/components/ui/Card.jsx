@@ -11,6 +11,8 @@ const paddingClass = {
  * @param {import('react').ReactNode} [props.children]
  * @param {string} [props.title]
  * @param {string} [props.subtitle]
+ * @param {string} [props.titleClassName]
+ * @param {string} [props.subtitleClassName]
  * @param {import('react').ReactNode} [props.actions]
  * @param {'sm'|'md'|'lg'} [props.padding='md']
  * @param {boolean} [props.hover=false]
@@ -21,6 +23,8 @@ export function Card({
   children,
   title,
   subtitle,
+  titleClassName = '',
+  subtitleClassName = '',
   actions,
   padding = 'md',
   hover = false,
@@ -37,8 +41,14 @@ export function Card({
       {hasHeader ? (
         <div className={styles.header}>
           <div className={styles.titles}>
-            {title != null ? <h2 className={styles.title}>{title}</h2> : null}
-            {subtitle != null ? <p className={styles.subtitle}>{subtitle}</p> : null}
+            {title != null ? (
+              <h2 className={[styles.title, titleClassName].filter(Boolean).join(' ')}>{title}</h2>
+            ) : null}
+            {subtitle != null ? (
+              <p className={[styles.subtitle, subtitleClassName].filter(Boolean).join(' ')}>
+                {subtitle}
+              </p>
+            ) : null}
           </div>
           {actions != null ? <div className={styles.actions}>{actions}</div> : null}
         </div>

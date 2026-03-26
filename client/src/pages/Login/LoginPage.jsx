@@ -162,6 +162,7 @@ export default function LoginPage() {
         className={styles.card}
         title="Library MS"
         subtitle="Sign in to continue your catalog workflow."
+        titleClassName={styles.brandTitle}
         padding="lg"
       >
         <div className={styles.content}>
