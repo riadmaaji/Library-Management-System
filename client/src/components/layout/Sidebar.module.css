@@ -197,6 +197,47 @@
   word-break: break-word;
 }
 
+.roleBadge {
+  border-width: 1px;
+  border-style: solid;
+  font-weight: var(--font-weight-bold);
+  letter-spacing: 0.06em;
+}
+
+.roleBadgeAdmin {
+  color: #f8fff9;
+  background: rgba(38, 104, 114, 0.9);
+  border-color: rgba(229, 246, 252, 0.42);
+}
+
+.roleBadgeEmployee {
+  color: #fff9ec;
+  background: rgba(136, 95, 41, 0.9);
+  border-color: rgba(255, 236, 199, 0.4);
+}
+
+.logoutButton {
+  color: #fff7eb;
+  border-color: rgba(255, 243, 226, 0.36);
+  background:
+    linear-gradient(145deg, rgba(196, 138, 58, 0.42), rgba(149, 89, 39, 0.76)),
+    rgba(40, 32, 24, 0.7);
+  box-shadow: 0 14px 28px -18px rgba(8, 5, 2, 0.92);
+}
+
+.logoutButton:hover:not(:disabled) {
+  color: #fffcf5;
+  border-color: rgba(255, 245, 228, 0.62);
+  background:
+    linear-gradient(145deg, rgba(215, 154, 70, 0.58), rgba(165, 97, 41, 0.86)),
+    rgba(43, 35, 26, 0.82);
+  transform: translateY(-1px);
+}
+
+.logoutButton:focus-visible {
+  outline-color: rgba(255, 236, 203, 0.82);
+}
+
 @media (min-width: 769px) {
   .backdrop {
     display: none;
@@ -221,7 +262,8 @@
   }
 
   .closeButton:hover,
-  .navLink:hover {
+  .navLink:hover,
+  .logoutButton:hover:not(:disabled) {
     transform: none;
   }
 }

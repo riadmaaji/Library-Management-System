@@ -141,7 +141,15 @@ export default function Sidebar({ isMobile = false, isOpen = false, onClose }) {
           <div className={styles.userCard}>
             <div className={styles.userMeta}>
               <p className={styles.userName}>{user?.name ?? 'Library Staff'}</p>
-              <Badge variant={user?.role === 'ADMIN' ? 'info' : 'neutral'}>
+              <Badge
+                variant={user?.role === 'ADMIN' ? 'info' : 'neutral'}
+                className={[
+                  styles.roleBadge,
+                  user?.role === 'ADMIN' ? styles.roleBadgeAdmin : styles.roleBadgeEmployee,
+                ]
+                  .filter(Boolean)
+                  .join(' ')}
+              >
                 {user?.role ?? 'SIGNED OUT'}
               </Badge>
             </div>
@@ -149,7 +157,8 @@ export default function Sidebar({ isMobile = false, isOpen = false, onClose }) {
           </div>
 
           <Button
-            variant="ghost"
+            variant="secondary"
+            className={styles.logoutButton}
             fullWidth
             icon={<NavIcon name="logout" />}
             aria-label="Log out"
