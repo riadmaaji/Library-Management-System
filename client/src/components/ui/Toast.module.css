@@ -135,3 +135,14 @@
 .warning .message {
   color: var(--color-text);
 }
+
+@media (prefers-reduced-motion: reduce) {
+  .root {
+    animation: none;
+  }
+
+  .exiting {
+    animation: none;
+    opacity: 0;
+  }
+}
