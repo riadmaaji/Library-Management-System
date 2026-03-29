@@ -1,5 +1,9 @@
 require('dotenv').config();
 
+if (!process.env.JWT_SECRET) {
+  throw new Error('JWT_SECRET environment variable is required. Check your server/.env file.');
+}
+
 module.exports = {
   PORT: process.env.PORT || 5000,
   JWT_SECRET: process.env.JWT_SECRET,
