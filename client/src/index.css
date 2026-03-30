@@ -130,6 +130,8 @@ body::before {
     linear-gradient(90deg, rgba(50, 40, 32, 0.018) 1px, transparent 1px);
   background-size: 24px 24px;
   mask-image: radial-gradient(circle at center, black, transparent 85%);
+  will-change: transform;
+  contain: strict;
 }
 
 img,
