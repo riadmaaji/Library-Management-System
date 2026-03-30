@@ -15,7 +15,7 @@ function listBorrows(req, res, next) {
 function borrowBook(req, res, next) {
   try {
     const borrow = borrowService.borrowBook(req.body);
-    res.json({
+    res.status(201).json({
       success: true,
       data: borrow,
     });

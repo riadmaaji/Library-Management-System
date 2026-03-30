@@ -15,7 +15,7 @@ function listCustomers(req, res, next) {
 function createCustomer(req, res, next) {
   try {
     const customer = customerService.createCustomer(req.body);
-    res.json({
+    res.status(201).json({
       success: true,
       data: customer,
     });

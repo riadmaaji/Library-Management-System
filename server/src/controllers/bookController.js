@@ -15,7 +15,7 @@ function listBooks(req, res, next) {
 function createBook(req, res, next) {
   try {
     const book = bookService.createBook(req.body);
-    res.json({
+    res.status(201).json({
       success: true,
       data: book,
     });

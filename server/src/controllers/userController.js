@@ -15,7 +15,7 @@ function listUsers(req, res, next) {
 async function createUser(req, res, next) {
   try {
     const user = await userService.createUser(req.body);
-    res.json({
+    res.status(201).json({
       success: true,
       data: user,
     });
